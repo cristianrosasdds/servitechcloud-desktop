@@ -33,13 +33,36 @@ function createWindow() {
   // Load the web app
   mainWindow.loadURL(APP_URL);
 
-  // Open external links in default browser
+  // Handle new windows (popups, print, PDFs)
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (!url.startsWith(APP_URL)) {
-      shell.openExternal(url);
-      return { action: "deny" };
+    // Allow blob: and data: URLs (used for PDF print previews)
+    if (url.startsWith("blob:") || url.startsWith("data:")) {
+      return { action: "allow" };
     }
-    return { action: "allow" };
+    // Allow same-app URLs (internal navigation / print views)
+    if (url.startsWith(APP_URL) || url.startsWith("https://servitechapp-app.vercel.app")) {
+      return { action: "allow" };
+    }
+    // External links → open in default browser
+    shell.openExternal(url);
+    return { action: "deny" };
+  });
+
+  // When a child window (print popup) is created, allow it to work properly
+  mainWindow.webContents.on("did-create-window", (childWindow) => {
+    // Allow the child window to open print dialog
+    childWindow.webContents.on("will-navigate", (event, url) => {
+      // Allow navigation within the app and blob/data URLs
+      if (
+        url.startsWith("https://servitechapp-app.vercel.app") ||
+        url.startsWith("blob:") ||
+        url.startsWith("data:")
+      ) {
+        return;
+      }
+      event.preventDefault();
+      shell.openExternal(url);
+    });
   });
 
   // Handle navigation to external URLs
