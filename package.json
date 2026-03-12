@@ -1,0 +1,72 @@
+{
+  "name": "servitechcloud",
+  "version": "2.0.0",
+  "description": "ServitechCloud - Gestión de talleres desde la nube",
+  "main": "main.js",
+  "author": "ServitechCloud",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:all": "electron-builder --mac --win",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.servitechcloud.app",
+    "productName": "ServitechCloud",
+    "copyright": "Copyright © 2026 ServitechCloud",
+    "mac": {
+      "category": "public.app-category.business",
+      "icon": "assets/icon.icns",
+      "identity": null,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["universal"]
+        }
+      ],
+      "darkModeSupport": true
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico"
+    },
+    "dmg": {
+      "background": "assets/dmg-background.png",
+      "window": {
+        "width": 660,
+        "height": 400
+      },
+      "contents": [
+        { "x": 195, "y": 180 },
+        { "x": 465, "y": 180, "type": "link", "path": "/Applications" }
+      ]
+    },
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "assets/**/*"
+    ]
+  }
+}
